@@ -1,0 +1,332 @@
+%if 0
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+%endif
+
+%filter substitution
+%define urlbarViewPadding 4px
+%define urlbarViewIconMarginEnd 8px
+%define urlbarViewFaviconOffset (@urlbarViewPadding@ + 16px /* type icon width */ + @urlbarViewIconMarginEnd@)
+%define urlbarViewInlineStartPadding (@urlbarBreakoutHorizontalExtend@ - 16px /* type icon width */ - @urlbarViewIconMarginEnd@ - 2px /* border */)
+%define urlbarViewHorizontalMargin 8px
+
+:root {
+  --autocomplete-popup-background: var(--arrowpanel-background);
+  --autocomplete-popup-color: var(--arrowpanel-color);
+  --autocomplete-popup-highlight-background: Highlight;
+  --autocomplete-popup-highlight-color: HighlightText;
+}
+
+:root[lwt-popup-darktext] {
+  --urlbar-popup-url-color: hsl(210, 77%, 47%);
+  --urlbar-popup-action-color: hsl(178, 100%, 28%);
+}
+
+:root[lwt-popup-brighttext] {
+  --urlbar-popup-url-color: @lwtPopupBrighttextLinkColor@;
+  --urlbar-popup-action-color: #30e60b;
+}
+
+.urlbarView {
+  /* Don't handle window drag events in case we are overlapping a toolbar */
+  -moz-window-dragging: no-drag;
+  text-shadow: none;
+}
+
+.urlbarView.megabar {
+  margin-inline: @urlbarViewHorizontalMargin@;
+}
+
+.urlbarView:not(.megabar) {
+  position: fixed;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  background: var(--autocomplete-popup-background);
+  color: var(--autocomplete-popup-color);
+  border-block: 1px solid var(--chrome-content-separator-color);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .2);
+}
+
+#urlbar-contextual-tip {
+  align-items: center;
+  display: flex;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  padding-inline-start: calc(@urlbarViewInlineStartPadding@);
+  padding-inline-end: calc(@urlbarBreakoutHorizontalExtend@ - @urlbarViewHorizontalMargin@);
+}
+
+.urlbarView:not(.megabar) #urlbar-contextual-tip {
+  padding-inline-start: var(--item-padding-start, calc(5px + @urlbarViewFaviconOffset@));
+  padding-inline-end: var(--item-padding-end, 5px);
+}
+
+#urlbar-contextual-tip-title {
+  flex-grow: 1;
+  padding-inline-end: 75px;
+}
+
+#urlbar-contextual-tip-button {
+  height: 2.3em;
+  width: 9.15em;
+  font-size: inherit;
+  border: none;
+  border-radius: 2px;
+  color: white;
+  background-color: #0060df; /* corresponds to blue-60 */
+}
+
+#urlbar-contextual-tip-button:hover {
+  background-color: #003eaa; /* corresponds to blue-70 */
+}
+
+#urlbar-contextual-tip-button:active {
+  background-color: #002275; /* corresponds to blue-80 */
+}
+
+#urlbar-contextual-tip-button:-moz-focusring {
+  box-shadow: 0 0 0 1px #0a84ff inset, 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10, 132, 255, 0.3);
+}
+
+#urlbar-contextual-tip-link {
+  text-align: end;
+}
+
+.urlbarView.megabar .urlbarView-body-inner {
+  width: calc(var(--urlbar-width) + 2 * @urlbarBreakoutHorizontalExtend@ - 2 * @urlbarViewHorizontalMargin@ - 2px /* urlbar border */);
+  border-top: 1px solid var(--panel-separator-color);
+}
+
+.urlbarView-results {
+  padding-block: @urlbarViewPadding@;
+  white-space: nowrap;
+}
+
+.urlbarView:not(.megabar) .urlbarView-results {
+  padding-inline: @urlbarViewPadding@;
+}
+
+.urlbarView-row {
+  border-radius: 2px;
+  fill: currentColor;
+  fill-opacity: .6;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-inline-start: calc(@urlbarViewInlineStartPadding@);
+  padding-inline-end: calc(@urlbarBreakoutHorizontalExtend@ - @urlbarViewHorizontalMargin@);
+}
+
+.urlbarView:not(.megabar) .urlbarView-row {
+  padding-inline-start: calc(var(--item-padding-start, calc(5px + @urlbarViewFaviconOffset@)) - @urlbarViewFaviconOffset@);
+  padding-inline-end: var(--item-padding-end, 5px);
+}
+
+:root[uidensity=touch] .urlbarView-row {
+  padding-top: 11px;
+  padding-bottom: 11px;
+}
+
+.urlbarView-row-inner {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: end;
+  justify-content: start;
+}
+
+.urlbarView-title[overflow],
+.urlbarView-url[overflow] {
+  mask-image: linear-gradient(to left, transparent, black 2em);
+}
+
+.urlbarView-title[overflow]:not([isurl]):-moz-locale-dir(rtl) {
+  mask-image: linear-gradient(to right, transparent, black 2em);
+}
+
+.urlbarView-title[isurl]:-moz-locale-dir(rtl),
+.urlbarView-url:-moz-locale-dir(rtl) {
+  direction: ltr !important;
+}
+
+.urlbarView-row:hover {
+  background: var(--arrowpanel-dimmed);
+}
+
+.urlbarView-row[selected] {
+  background: var(--autocomplete-popup-highlight-background);
+  color: var(--autocomplete-popup-highlight-color);
+  fill-opacity: 1;
+}
+
+.urlbarView-type-icon,
+.urlbarView-favicon {
+  min-width: 16px;
+  height: 16px;
+  margin-inline-end: @urlbarViewIconMarginEnd@;
+  background-repeat: no-repeat;
+  background-size: contain;
+  -moz-context-properties: fill, fill-opacity;
+}
+
+#urlbar-contextual-tip-icon {
+  min-width: 24px;
+  height: 24px;
+  margin-inline-end: @urlbarViewIconMarginEnd@;
+  background-repeat: no-repeat;
+  background-size: contain;
+  -moz-context-properties: fill, fill-opacity;
+}
+
+@media (min-resolution: 2dppx) {
+  .urlbarView-type-icon,
+  .urlbarView-favicon,
+  #urlbar-contextual-tip-icon {
+      transform: translateY(-1.5px);
+  }
+}
+
+.urlbarView-row[type=bookmark] > .urlbarView-row-inner > .urlbarView-type-icon {
+  background-image: url(chrome://browser/skin/bookmark.svg);
+}
+
+.urlbarView-row[type=remotetab] > .urlbarView-row-inner > .urlbarView-type-icon,
+.urlbarView:not([actionoverride]) .urlbarView-row[type=switchtab] > .urlbarView-row-inner > .urlbarView-type-icon {
+  background-image: url(chrome://browser/skin/tab.svg);
+}
+
+.urlbarView-title {
+  overflow: hidden;
+  white-space: nowrap;
+  /* We prioritize the title over the url, so it can grow freely, but it should
+     never crop the url completely */
+  flex-shrink: 0;
+  max-width: calc(70% - 2 * (16px + @urlbarViewIconMarginEnd@));
+}
+
+.urlbarView-title-separator::before {
+  content: "\2014";
+  color: var(--panel-disabled-color);
+  margin: 0 .4em;
+}
+
+.urlbarView-title:empty + .urlbarView-tags:empty + .urlbarView-title-separator {
+  display: none;
+}
+
+.urlbarView-tags,
+.urlbarView-title:not(:empty) ~ .urlbarView-secondary {
+  font-size: .85em;
+}
+
+.urlbarView-title > strong,
+.urlbarView-url > strong,
+.urlbarView-tag > strong {
+  font-weight: 600;
+}
+
+.urlbarView-title:not(:empty) ~ .urlbarView-secondary {
+  color: var(--urlbar-popup-action-color);
+}
+
+.urlbarView-url {
+  overflow: hidden;
+}
+
+.urlbarView-title:not(:empty) ~ .urlbarView-url {
+  color: var(--urlbar-popup-url-color);
+}
+
+.urlbarView-row[selected] > .urlbarView-row-inner > .urlbarView-title-separator::before,
+.urlbarView-row[selected] > .urlbarView-row-inner > .urlbarView-secondary {
+  color: inherit;
+}
+
+.urlbarView-row[type=remotetab][selected] > .urlbarView-row-inner > .urlbarView-action,
+.urlbarView-row[type=remotetab]:hover > .urlbarView-row-inner > .urlbarView-action,
+.urlbarView-row[type=remotetab]:not([selected]):not(:hover) > .urlbarView-row-inner > .urlbarView-url,
+.urlbarView-row[type=search]:not([selected]):not(:hover) > .urlbarView-row-inner > .urlbarView-title:not(:empty) ~ .urlbarView-action,
+.urlbarView-row[type=search]:not([selected]):not(:hover) > .urlbarView-row-inner > .urlbarView-title-separator,
+.urlbarView[actionoverride] .urlbarView-row[type=switchtab] > .urlbarView-row-inner > .urlbarView-action,
+.urlbarView:not([actionoverride]) .urlbarView-row[type=switchtab] > .urlbarView-row-inner > .urlbarView-url {
+  /* Use visibility:collapse instead of display:none since the latter can
+     confuse the overflow state of title and url elements when their content
+     changes while they're hidden. */
+  visibility: collapse;
+}
+
+.urlbarView-tags {
+  overflow: hidden;
+}
+
+.urlbarView-tag {
+  background-color: var(--arrowpanel-dimmed);
+  border-radius: 2px;
+  border: 1px solid var(--panel-separator-color);
+  padding: 0 1px;
+  margin-inline-start: .4em;
+}
+
+.urlbarView-row[selected] > .urlbarView-row-inner > .urlbarView-tags > .urlbarView-tag {
+  background-color: var(--autocomplete-popup-highlight-color);
+  color: var(--autocomplete-popup-highlight-background);
+}
+
+/* Search one-offs. */
+#urlbar .search-one-offs:not([hidden]) {
+  display: flex;
+  align-items: start;
+  padding-block: 16px;
+}
+
+.urlbarView.megabar .search-one-offs {
+  padding-inline: calc(@urlbarBreakoutHorizontalExtend@ - @urlbarViewHorizontalMargin@);
+}
+
+#urlbar:not(.megabar) .search-one-offs {
+  padding-inline-start: var(--item-padding-start, 5px);
+  padding-inline-end: var(--item-padding-end, 5px);
+}
+
+#urlbar .search-panel-one-offs {
+  padding-inline-start: 12px;
+  /* Make sure we can fit at least three buttons horizontally. */
+  min-width: 120px;
+  box-sizing: content-box;
+}
+
+#urlbar .search-panel-header {
+  padding: 0;
+  min-height: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#urlbar .search-panel-one-offs-header-label {
+  margin: 0;
+}
+
+#urlbar .searchbar-engine-one-off-item {
+  min-width: 32px;
+  height: 32px;
+  margin: 0 4px;
+}
+
+#urlbar .search-one-offs-spacer {
+  flex-grow: 1;
+}
+
+/* search bar popup */
+
+#PopupSearchAutoComplete {
+  background: var(--autocomplete-popup-background);
+  color: var(--autocomplete-popup-color);
+  border-color: var(--arrowpanel-border-color);
+}
+
+#PopupSearchAutoComplete .autocomplete-richlistitem[selected] {
+  background: var(--autocomplete-popup-highlight-background);
+  color: var(--autocomplete-popup-highlight-color);
+}
+

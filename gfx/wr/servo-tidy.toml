@@ -1,0 +1,37 @@
+[configs]
+skip-check-length = false
+skip-check-licenses = false
+check-alphabetical-order = false
+
+[ignore]
+# Ignored packages with duplicated versions
+packages = [
+    "crossbeam-utils",
+    "gl_generator",
+    "khronos_api",
+    "lazy_static",
+    "nix",
+    "percent-encoding",
+    "rand",
+    "rand_core",
+    "winapi",
+    "core-graphics",
+    "core-text",
+    "xml-rs",
+    "yaml-rust",
+]
+
+# Files that are ignored for all tidy and lint checks.
+files = [
+    "./wrench/src/egl.rs",  # Copied from glutin
+    "./ci-scripts/wrupdater/converter.py",  # servo-tidy doesn't like python3
+    "./ci-scripts/wrupdater/read-json.py",  # servo-tidy doesn't like python3
+]
+
+# Many directories are currently ignored while we tidy things up
+# gradually.
+directories = [
+   # Generated and upstream code combined with our own. Could use cleanup
+  "./target",
+  "./webrender/src",
+]

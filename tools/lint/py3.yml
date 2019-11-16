@@ -1,0 +1,30 @@
+---
+py3:
+    description: Python 3 compatibility check
+    include: ['.']
+    exclude:
+        - browser/app
+        - build
+        - client.py
+        - dom/canvas/test
+        - gfx
+        - ipc/ipdl
+        - layout/reftests
+        - layout/style/ServoCSSPropList.mako.py
+        - layout/tools/reftest
+        - security/manager/ssl
+        - testing/awsy
+        - testing/gtest
+        - testing/mozharness
+        - testing/tps
+        - testing/web-platform
+        - toolkit
+        - tools/profiler
+        - tools/rb
+        - xpcom/idl-parser
+    extensions: ['py']
+    support-files:
+        - 'tools/lint/python/*compat*'
+    type: external
+    payload: python.compat:lintpy3
+    setup: python.compat:setuppy3

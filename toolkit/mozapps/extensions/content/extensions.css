@@ -1,0 +1,63 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+@namespace xhtml "http://www.w3.org/1999/xhtml";
+
+/* HTML link elements do weird things to the layout if they are not hidden */
+xhtml|link {
+  display: none;
+}
+
+.sidebar-footer-button > .text-link {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+
+.text-list {
+  white-space: pre-line;
+}
+
+#header-searching:not([active]) {
+  visibility: hidden;
+}
+
+#addons-page:not([warning]) .global-warning,
+#addons-page:not([warning="safemode"]) .global-warning-safemode,
+#addons-page:not([warning="checkcompatibility"]) .global-warning-checkcompatibility,
+#addons-page:not([warning="updatesecurity"]) .global-warning-updatesecurity {
+  display: none;
+}
+
+/* Plugins aren't yet disabled by safemode (bug 342333),
+   so don't show that warning when viewing plugins. */
+#addons-page[warning="safemode"] #html-view[type="list"][param="plugin"] .global-warning-safemode,
+#addons-page[warning="safemode"] .view-pane[type="plugin"] .global-warning-container,
+#addons-page[warning="safemode"] #detail-view[loading="true"] .global-warning {
+  display: none;
+}
+#addons-page .view-pane:not([type="plugin"]) #plugindeprecation-notice {
+  display: none;
+}
+
+.html-alert-container > .message-bar {
+  margin-bottom: 8px;
+}
+
+.html-global-warning-button {
+  margin-inline: 0;
+}
+
+/* Elements in unselected richlistitems cannot be focused */
+richlistitem:not([selected]) * {
+  -moz-user-focus: ignore;
+}
+
+#header-search {
+  width: 22em;
+}
+
+#pluginFlashBlockingCheckbox .checkbox-label-box {
+  display: none; /*see bug 1508724*/
+}

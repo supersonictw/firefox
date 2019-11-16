@@ -1,0 +1,71 @@
+# -*- Mode: python; indent-tabs-mode: nil; tab-width: 40 -*-
+# vim: set filetype=python:
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Library('winlauncher')
+
+FORCE_STATIC_LIB = True
+
+UNIFIED_SOURCES += [
+    '/ipc/mscom/ProcessRuntime.cpp',
+    '/widget/windows/WindowsConsole.cpp',
+    'ErrorHandler.cpp',
+    'LauncherProcessWin.cpp',
+    'LaunchUnelevated.cpp',
+]
+
+SOURCES += [
+    'DllBlocklistWin.cpp',
+]
+# Our patched NtMapViewOfSection can be called before the process's import
+# table is populated.  Don't let the compiler insert any instrumentation
+# that might call an import.
+SOURCES['DllBlocklistWin.cpp'].no_pgo = True
+
+# DllBlocklistWin.cpp should be compiled in a freestanding environment, as
+# our patched NtMapViewOfSection must not assume that it has access to any
+# runtime libraries.
+if CONFIG['CC_TYPE'] == 'clang-cl':
+    SOURCES['DllBlocklistWin.cpp'].flags += ['-Xclang', '-ffreestanding']
+else:
+    SOURCES['DllBlocklistWin.cpp'].flags += ['-ffreestanding']
+
+# Disable -ftrivial-auto-var-init=pattern for DllBlocklistWin.cpp because
+# the file's interceptions happen so early in the main process that the
+# loader hasn't yet resolved the import of memset (used by
+# -ftrivial-auto-var-init) from vcruntime140.dll.
+if CONFIG['CC_TYPE'] == 'clang-cl':
+    SOURCES['DllBlocklistWin.cpp'].flags += [
+        '-Xclang', '-ftrivial-auto-var-init=uninitialized',
+    ]
+else:
+    SOURCES['DllBlocklistWin.cpp'].flags += [
+        '-ftrivial-auto-var-init=uninitialized',
+    ]
+
+OS_LIBS += [
+    'ntdll',
+    'oleaut32',
+    'ole32',
+    'rpcrt4',
+    'version',
+]
+
+TEST_DIRS += [
+    'test',
+]
+
+if CONFIG['MOZ_LAUNCHER_PROCESS']:
+    UNIFIED_SOURCES += [
+        '/toolkit/xre/LauncherRegistryInfo.cpp',
+        '/toolkit/xre/WinTokenUtils.cpp',
+    ]
+    for var in ('MOZ_APP_BASENAME', 'MOZ_APP_VENDOR'):
+        DEFINES[var] = '"%s"' % CONFIG[var]
+
+DisableStlWrapping()
+
+with Files('**'):
+    BUG_COMPONENT = ('Firefox', 'Launcher Process')

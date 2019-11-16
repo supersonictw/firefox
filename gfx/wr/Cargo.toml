@@ -1,0 +1,15 @@
+[workspace]
+members = [
+    "direct-composition",
+    "examples",
+    "webrender",
+    "webrender_api",
+    "wrench",
+]
+
+[profile.release]
+debug = true
+panic = "abort"
+
+[profile.dev]
+panic = "abort"
